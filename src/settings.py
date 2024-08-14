@@ -8,5 +8,7 @@ class Settings:
         self.screen_height = 640
         self.square_size = 50
         self.bg_color = (0, 50, 0)
-        self.white_color = (255, 255, 255)
-        self.black_color = (0, 0, 0)
+        self.white_color = (232, 235, 239)
+        self.black_color = (125, 135, 150)
+        self.white_pieces = (242, 242, 242)
+        self.black_pieces = (0, 0, 0)
