@@ -3,6 +3,7 @@ import pygame
 
 from settings import Settings
 from chessboard import ChessBoard
+from pieces import Piece
 
 class ChessKingdom:
     """A class dedicated to managing the resources and the way the game works."""
@@ -13,6 +14,7 @@ class ChessKingdom:
         pygame.init()
         self.settings = Settings()
         self.chessboard = ChessBoard()
+        self.pieces = Piece()
 
         self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
         self.settings.screen_width = self.screen.get_rect().width

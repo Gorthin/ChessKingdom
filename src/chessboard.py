@@ -1,6 +1,7 @@
 import pygame
 
 from settings import Settings
+from pieces import Piece
 
 class ChessBoard():
     """A class dedicated to managing the resources and drawing chess board."""
@@ -9,6 +10,7 @@ class ChessBoard():
     def __init__(self):
         """Initializing the resources."""
         self.settings = Settings()
+        self.pieces = Piece()
         self.offset_x = self.settings.screen_width // 2 - 50
         self.offset_y = self.settings.screen_height // 4 - 50
         self.font = pygame.font.Font(None, 24)
@@ -38,6 +40,31 @@ class ChessBoard():
                     self.draw_white_square(screen, col, row)
                 else:
                     self.draw_black_square(screen, col, row)
+                # Drawing pieces based on their initial position
+                if row == 0 and col in [0, 7]:
+                    self.pieces.draw_piece(screen, "black_rook", row, col)
+                elif row == 0 and col in [1, 6]:
+                    self.pieces.draw_piece(screen, "black_knight", row, col)
+                elif row == 0 and col in [2, 5]:
+                    self.pieces.draw_piece(screen, "black_bishop", row, col)
+                elif row == 0 and col == 3:
+                    self.pieces.draw_piece(screen, "black_queen", row, col)
+                elif row == 0 and col == 4:
+                    self.pieces.draw_piece(screen, "black_king", row, col)
+                elif row == 1:
+                    self.pieces.draw_piece(screen, "black_pawn", row, col)
+                elif row == 7 and col in [0, 7]:
+                    self.pieces.draw_piece(screen, "white_rook", row, col)
+                elif row == 7 and col in [1, 6]:
+                    self.pieces.draw_piece(screen, "white_knight", row, col)
+                elif row == 7 and col in [2, 5]:
+                    self.pieces.draw_piece(screen, "white_bishop", row, col)
+                elif row == 7 and col == 3:
+                    self.pieces.draw_piece(screen, "white_queen", row, col)
+                elif row == 7 and col == 4:
+                    self.pieces.draw_piece(screen, "white_king", row, col)
+                elif row == 6:
+                    self.pieces.draw_piece(screen, "white_pawn", row, col)
 
         """Drawing description on all sides"""
         for i in range(8):
