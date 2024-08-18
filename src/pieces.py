@@ -23,14 +23,14 @@ class Piece():
 
 
     def draw_piece(self, screen, piece_name, row, col):
-            # Pobieranie czcionki
-            font = pygame.font.Font("Arial Unicode MS.ttf", 50)
+            # Downloading font
+            font = pygame.font.Font("Arial Unicode MS.ttf", 40)
 
-            # Renderowanie tekstu
+            # Text rendering
             text = font.render(self.pieces[piece_name], True, (0, 0, 0))
 
-            # Obliczanie pozycji tekstu
+            # Calculating text position
             text_rect = text.get_rect(center=(col * 50 + 25 + self.offset_x, row * 50 + 25 + self.offset_y))
 
-            # Rysowanie tekstu na ekranie
+            # Drawing text on the screen
             screen.blit(text, text_rect)

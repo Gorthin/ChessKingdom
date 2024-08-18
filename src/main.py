@@ -3,7 +3,7 @@ import pygame
 
 from settings import Settings
 from chessboard import ChessBoard
-from pieces import Piece
+
 
 class ChessKingdom:
     """A class dedicated to managing the resources and the way the game works."""
@@ -14,7 +14,6 @@ class ChessKingdom:
         pygame.init()
         self.settings = Settings()
         self.chessboard = ChessBoard()
-        self.pieces = Piece()
 
         self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
         self.settings.screen_width = self.screen.get_rect().width
@@ -45,13 +44,10 @@ class ChessKingdom:
 
     def _update_screen(self):
         """Updates the images on the screen and goes to a new screen."""
-        # Refresh the screen during each iteration of the loop
-        # self.screen.fill(self.settings.bg_color)
-
         # Waiting for a key or mouse button to be pressed.
         pygame.display.flip()
 
 if __name__ == '__main__':
-    #Creation of a copy of the game and its launch.
+    # Creation of a copy of the game and its launch.
     ai = ChessKingdom()
     ai.run_game()
