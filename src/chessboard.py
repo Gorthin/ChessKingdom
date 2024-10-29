@@ -1,4 +1,5 @@
 import random
+import sys
 import pygame
 
 from settings import Settings
@@ -73,3 +74,71 @@ class ChessBoard():
                 text_rect = text.get_rect(center=(self.offset_x + (i + 1) * self.settings.square_size - self.settings.square_size // 2, y))
                 screen.blit(text, text_rect)
             screen.blit(text, text_rect)
+
+
+    def random_piece_arrangement(self, screen, num_black_pieces, num_white_pieces):
+        """Displays a random arrangement of specified number of black and white pieces on the chessboard."""
+        # Draw an empty board
+        for row in range(8):
+            for col in range(8):
+                color = self.settings.white_color if (row + col) % 2 == 0 else self.settings.black_color
+                self.draw_square(screen, col, row, color)
+
+        # Get available piece types
+        black_piece_types = {
+            "king": 1,
+            "queen": 1,
+            "rook": 2,
+            "bishop": 2,
+            "knight": 2,
+            "pawn": 8
+        }
+        white_piece_types = {
+            "king": 1,
+            "queen": 1,
+            "rook": 2,
+            "bishop": 2,
+            "knight": 2,
+            "pawn": 8
+        }
+
+        # Check if requested piece count is greater than available pieces
+        max_black_pieces = sum(black_piece_types.values())
+        max_white_pieces = sum(white_piece_types.values())
+
+        # Adjust the number of pieces if requested count exceeds available pieces
+        num_black_pieces = min(num_black_pieces, max_black_pieces)
+        num_white_pieces = min(num_white_pieces, max_white_pieces)
+
+        # Randomly select and place black pieces
+        black_pieces = []
+        all_positions = [(r, c) for r in range(8) for c in range(8)]
+        random.shuffle(all_positions)
+        for piece_type, max_count in black_piece_types.items():
+            count = random.randint(0, min(max_count, num_black_pieces))
+            num_black_pieces -= count
+            for _ in range(count):
+                position = random.choice(all_positions)
+                all_positions.remove(position)
+                black_pieces.append((piece_type, position))
+        for piece_type, position in black_pieces:
+            self.pieces.draw_piece(screen, f"black_{piece_type}", position[0], position[1])
+
+        # Randomly select and place white pieces
+        white_pieces = []
+        for piece_type, max_count in white_piece_types.items():
+            count = random.randint(0, min(max_count, num_white_pieces))
+            num_white_pieces -= count
+            for _ in range(count):
+                position = random.choice(all_positions)
+                all_positions.remove(position)
+                white_pieces.append((piece_type, position))
+        for piece_type, position in white_pieces:
+            self.pieces.draw_piece(screen, f"white_{piece_type}", position[0], position[1])
+
+        pygame.display.flip()
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
