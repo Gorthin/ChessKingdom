@@ -24,7 +24,7 @@ class Piece():
 
     def draw_piece(self, screen, piece_name, row, col):
             # Downloading font
-            font = pygame.font.Font("Arial Unicode MS.ttf", 40)
+            font = pygame.font.Font("Arial Unicode MS.TTF", 40)
 
             # Text rendering
             text = font.render(self.pieces[piece_name], True, (0, 0, 0))
