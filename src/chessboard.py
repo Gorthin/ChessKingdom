@@ -134,11 +134,3 @@ class ChessBoard():
                 all_positions.remove(position)
                 white_pieces.append((piece_type, position))
         for piece_type, position in white_pieces:
-            self.pieces.draw_piece(screen, f"white_{piece_type}", position[0], position[1])
-
-        pygame.display.flip()
-        while True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()

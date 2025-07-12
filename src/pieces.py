@@ -22,15 +22,21 @@ class Piece():
         self.offset_y = self.settings.screen_height // 4 - 50
 
 
-    def draw_piece(self, screen, piece_name, row, col):
-            # Downloading font
-            font = pygame.font.Font("Arial Unicode MS.TTF", 40)
+    def draw_piece(
+        self,
+        screen: pygame.Surface,
+        piece_name: str,
+        row: int,
+        col: int
+    ) -> None:
+        # Downloading font
+        font = pygame.font.Font("Arial Unicode MS.TTF", 40)
 
-            # Text rendering
-            text = font.render(self.pieces[piece_name], True, (0, 0, 0))
+        # Text rendering
+        text = font.render(self.pieces[piece_name], True, (0, 0, 0))
 
-            # Calculating text position
-            text_rect = text.get_rect(center=(col * 50 + 25 + self.offset_x, row * 50 + 25 + self.offset_y))
+        # Calculating text position
+        text_rect = text.get_rect(center=(col * 50 + 25 + self.offset_x, row * 50 + 25 + self.offset_y))
 
-            # Drawing text on the screen
-            screen.blit(text, text_rect)
+        # Drawing text on the screen
+        screen.blit(text, text_rect)
