@@ -134,3 +134,4 @@ class ChessBoard():
                 all_positions.remove(position)
                 white_pieces.append((piece_type, position))
         for piece_type, position in white_pieces:
+            self.pieces.draw_piece(screen, f"white_{piece_type}", position[0], position[1])
