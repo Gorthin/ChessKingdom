@@ -1,6 +1,8 @@
 import random
 import sys
 import pygame
+import tkinter as tk
+from tkinter import filedialog
 
 from settings import Settings
 from pieces import Piece
@@ -58,7 +60,11 @@ class ChessBoard():
                         if (row, col) in positions:
                             self.pieces.draw_piece(screen, f"{color_name}_{piece}", row, col)
 
-        """Drawing description on all sides"""
+        self.draw_board_descriptions(screen)
+
+
+    def draw_board_descriptions(self, screen):
+        """Draws row numbers and column letters around the chessboard."""
         for i in range(8):
             # Row numbers
             text = self.font.render(str(8 - i), True, self.settings.white_color)
@@ -73,7 +79,6 @@ class ChessBoard():
                       self.offset_y + 8 * self.settings.square_size + self.settings.square_size // 2]:
                 text_rect = text.get_rect(center=(self.offset_x + (i + 1) * self.settings.square_size - self.settings.square_size // 2, y))
                 screen.blit(text, text_rect)
-            screen.blit(text, text_rect)
 
 
     def random_piece_arrangement(self, screen, num_black_pieces, num_white_pieces):
@@ -135,3 +140,58 @@ class ChessBoard():
                 white_pieces.append((piece_type, position))
         for piece_type, position in white_pieces:
             self.pieces.draw_piece(screen, f"white_{piece_type}", position[0], position[1])
+
+
+    def load_custom_position(self) -> 'pygame.Surface | None':
+        """
+        Loads piece positions from a .txt file and returns a Surface with the custom board drawn.
+        Supports chess notation, e.g. white_pawn C6, black_queen F3.
+        Returns the Surface if loaded successfully, None otherwise.
+        """
+        pygame.event.clear()
+
+        root = tk.Tk()
+        root.withdraw()
+        file_path = filedialog.askopenfilename(
+            title="Select position file",
+            filetypes=(("Text files", "*.txt"), ("All files", "*.*"))
+        )
+        root.destroy()
+
+        if not file_path:
+            return None
+
+        board_surface = pygame.Surface((self.settings.screen_width, self.settings.screen_height))
+
+        # Draw empty board
+        for row in range(8):
+            for col in range(8):
+                color = self.settings.white_color if (row + col) % 2 == 0 else self.settings.black_color
+                self.draw_square(board_surface, col, row, color)
+
+        # Helper to convert chess notation to (row, col)
+        def chess_notation_to_coords(pos):
+            if len(pos) != 2:
+                return None
+            col_letter = pos[0].upper()
+            row_digit = pos[1]
+            if col_letter < 'A' or col_letter > 'H' or row_digit < '1' or row_digit > '8':
+                return None
+            col = ord(col_letter) - ord('A')
+            row = 8 - int(row_digit)
+            return row, col
+
+        try:
+            with open(file_path, "r") as f:
+                for line in f:
+                    parts = line.strip().split()
+                    if len(parts) == 2:
+                        piece_name, pos = parts
+                        coords = chess_notation_to_coords(pos)
+                        if coords and piece_name in self.pieces.pieces:
+                            self.pieces.draw_piece(board_surface, piece_name, coords[0], coords[1])
+            self.draw_board_descriptions(board_surface)
+            return board_surface
+        except Exception as e:
+            print(f"Error loading file: {e}")
+            return None

@@ -1,4 +1,5 @@
 import sys
+import threading
 import pygame
 
 from settings import Settings
@@ -23,6 +24,7 @@ class ChessKingdom:
         self.display_mode = "board"
         self.random_mode = False
         self.randomize_pieces = False
+        self.custom_board = None
         self.custom_mode = False
         self.input_black = ""
         self.input_white = ""
@@ -47,6 +49,7 @@ class ChessKingdom:
                 self.chessboard.draw_board(self.screen)
                 self.randomized = False
                 self.random_board = None
+                self.custom_board = None
             elif self.random_mode:
                 try:
                     black = int(self.input_black) if self.input_black else 2
@@ -65,7 +68,10 @@ class ChessKingdom:
                         self.randomized = True
                     self.screen.blit(self.random_board, (0, 0))
             elif self.custom_mode:
-                self.chessboard.draw_board(self.screen)
+                if self.custom_board:
+                    self.screen.blit(self.custom_board, (0, 0))
+                else:
+                    self.chessboard.draw_board(self.screen)
                 self.randomized = False
                 self.random_board = None
             self._draw_menu()
@@ -152,10 +158,12 @@ class ChessKingdom:
                     self.random_mode = True
                     self.custom_mode = False
                     self.display_mode = "random"
-                elif 50 < event.pos[0] < 250 and 250 < event.pos[1] < 300:
-                    self.random_mode = False
-                    self.custom_mode = True
+                elif 50 < event.pos[0] < 250 and 300 < event.pos[1] < 350:
+                    threading.Thread(target=self._load_custom_position_thread).start()
                     self.display_mode = "custom"
+                    self.custom_mode = True
+                    self.randomized = False
+                    self.random_board = None
                 elif 50 < event.pos[0] < 300 and 500 < event.pos[1] < 550:
                     self.display_mode = "board"
                     self.random_mode = False
@@ -188,6 +196,14 @@ class ChessKingdom:
         text_surf = font.render(text, True, text_color)
         text_rect = text_surf.get_rect(center=rect.center)
         surface.blit(text_surf, text_rect)
+
+
+    def _load_custom_position_thread(self):
+        board_surface = self.chessboard.load_custom_position()
+        if board_surface:
+            self.custom_board = board_surface
+        else:
+            self.custom_board = None
 
 
     def _update_screen(self):
