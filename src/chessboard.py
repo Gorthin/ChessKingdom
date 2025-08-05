@@ -147,6 +147,7 @@ class ChessBoard():
             return None
 
         board_surface = pygame.Surface((self.settings.screen_width, self.settings.screen_height))
+        board_surface.fill(self.settings.bg_color)
 
         # Draw empty board
         for row in range(8):

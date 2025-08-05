@@ -64,6 +64,7 @@ class ChessKingdom:
                 else:
                     if not self.randomized:
                         self.random_board = pygame.Surface(self.screen.get_size())
+                        self.random_board.fill(self.settings.bg_color)
                         self.chessboard.random_piece_arrangement(self.random_board, black, white)
                         self.randomized = True
                     self.screen.blit(self.random_board, (0, 0))
@@ -77,6 +78,7 @@ class ChessKingdom:
             self._draw_menu()
             self._update_screen()
 
+
     def _draw_menu(self):
         """Draws the menu on the screen."""
         font = pygame.font.Font(None, 36)
@@ -86,10 +88,24 @@ class ChessKingdom:
 
         font = pygame.font.Font(None, 24)
         text = font.render("Select display mode:", True, self.settings.white_color)
-        text_rect = text.get_rect(center=(150, 100))
+        text_rect = text.get_rect(center=(175, 90))
         self.screen.blit(text, text_rect)
 
-        random_button = pygame.Rect(50, 150, 250, 50)
+        # Przycisk: Start chess game
+        start_button = pygame.Rect(50, 130, 250, 50)
+        self.draw_button(
+            self.screen,
+            start_button,
+            "Start chess game",
+            font,
+            bg_color=(220, 220, 220),
+            text_color=(30, 30, 30),
+            border_color=(100, 100, 100),
+            shadow_color=(180, 180, 180)
+        )
+
+        # Przycisk: Random piece arrangement
+        random_button = pygame.Rect(50, 200, 250, 50)
         self.draw_button(
             self.screen,
             random_button,
@@ -101,13 +117,14 @@ class ChessKingdom:
             shadow_color=(180, 180, 180)
         )
 
-        pygame.draw.rect(self.screen, (255,255,255), (50, 210, 90, 40), 2 if self.active_input == "black" else 1)
-        pygame.draw.rect(self.screen, (255,255,255), (160, 210, 90, 40), 2 if self.active_input == "white" else 1)
+        # Pola do wpisywania liczby figur
+        pygame.draw.rect(self.screen, (255,255,255), (50, 270, 90, 40), 2 if self.active_input == "black" else 1)
+        pygame.draw.rect(self.screen, (255,255,255), (160, 270, 90, 40), 2 if self.active_input == "white" else 1)
         font_small = pygame.font.Font(None, 28)
         black_text = font_small.render(self.input_black or "Black", True, (0,0,0))
         white_text = font_small.render(self.input_white or "White", True, (0,0,0))
-        self.screen.blit(black_text, (55, 220))
-        self.screen.blit(white_text, (165, 220))
+        self.screen.blit(black_text, (55, 280))
+        self.screen.blit(white_text, (165, 280))
 
         font_limit = pygame.font.Font(None, 22)
         limit_text = font_limit.render("Max: 16 black, 16 white pieces", True, (255, 255, 0))
@@ -118,7 +135,8 @@ class ChessKingdom:
             error_text = font_error.render(self.input_error, True, (255, 0, 0))
             self.screen.blit(error_text, (50, 270))
 
-        custom_button = pygame.Rect(50, 300, 250, 50)
+        # Przycisk: Custom piece arrangement
+        custom_button = pygame.Rect(50, 320, 250, 50)
         self.draw_button(
             self.screen,
             custom_button,
@@ -130,8 +148,9 @@ class ChessKingdom:
             shadow_color=(180, 180, 180)
         )
 
+        # Przycisk: Back to menu (tylko poza głównym menu)
         if self.display_mode != "board":
-            back_button = pygame.Rect(50, 500, 250, 50)
+            back_button = pygame.Rect(50, 400, 250, 50)
             self.draw_button(
                 self.screen,
                 back_button,
@@ -150,21 +169,36 @@ class ChessKingdom:
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if 50 < event.pos[0] < 140 and 210 < event.pos[1] < 250:
-                    self.active_input = "black"
-                elif 160 < event.pos[0] < 250 and 210 < event.pos[1] < 250:
-                    self.active_input = "white"
-                elif 50 < event.pos[0] < 250 and 150 < event.pos[1] < 200:
+                x, y = event.pos
+                # Start chess game
+                if 50 < x < 300 and 130 < y < 180:
+                    self.display_mode = "board"
+                    self.random_mode = False
+                    self.custom_mode = False
+                    self.active_input = None
+                    self.randomized = False
+                    self.random_board = None
+                    self.custom_board = None
+                # Random piece arrangement
+                elif 50 < x < 300 and 200 < y < 250:
                     self.random_mode = True
                     self.custom_mode = False
                     self.display_mode = "random"
-                elif 50 < event.pos[0] < 250 and 300 < event.pos[1] < 350:
+                # Pole do wpisywania liczby czarnych
+                elif 50 < x < 140 and 260 < y < 300:
+                    self.active_input = "black"
+                # Pole do wpisywania liczby białych
+                elif 160 < x < 250 and 260 < y < 300:
+                    self.active_input = "white"
+                # Custom piece arrangement
+                elif 50 < x < 300 and 320 < y < 370:
                     threading.Thread(target=self._load_custom_position_thread).start()
                     self.display_mode = "custom"
                     self.custom_mode = True
                     self.randomized = False
                     self.random_board = None
-                elif 50 < event.pos[0] < 300 and 500 < event.pos[1] < 550:
+                # Back to menu
+                elif self.display_mode != "board" and 50 < x < 300 and 400 < y < 450:
                     self.display_mode = "board"
                     self.random_mode = False
                     self.custom_mode = False
