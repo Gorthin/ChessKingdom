@@ -166,56 +166,66 @@ class ChessKingdom:
     def _check_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+                self._handle_quit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                x, y = event.pos
-                # Start chess game
-                if 50 < x < 300 and 130 < y < 180:
-                    self.display_mode = "board"
-                    self.random_mode = False
-                    self.custom_mode = False
-                    self.active_input = None
-                    self.randomized = False
-                    self.random_board = None
-                    self.custom_board = None
-                # Random piece arrangement
-                elif 50 < x < 300 and 200 < y < 250:
-                    self.random_mode = True
-                    self.custom_mode = False
-                    self.display_mode = "random"
-                # Pole do wpisywania liczby czarnych
-                elif 50 < x < 140 and 260 < y < 300:
-                    self.active_input = "black"
-                # Pole do wpisywania liczby białych
-                elif 160 < x < 250 and 260 < y < 300:
-                    self.active_input = "white"
-                # Custom piece arrangement
-                elif 50 < x < 300 and 320 < y < 370:
-                    threading.Thread(target=self._load_custom_position_thread).start()
-                    self.display_mode = "custom"
-                    self.custom_mode = True
-                    self.randomized = False
-                    self.random_board = None
-                # Back to menu
-                elif self.display_mode != "board" and 50 < x < 300 and 400 < y < 450:
-                    self.display_mode = "board"
-                    self.random_mode = False
-                    self.custom_mode = False
-                    self.active_input = None
+                self._handle_mouse(event)
+            elif event.type == pygame.KEYDOWN:
+                self._handle_key(event)
+
+    def _handle_quit(self):
+        pygame.quit()
+        sys.exit()
+
+    def _handle_mouse(self, event):
+        x, y = event.pos
+        # Start chess game
+        if 50 < x < 300 and 130 < y < 180:
+            self.display_mode = "board"
+            self.random_mode = False
+            self.custom_mode = False
+            self.active_input = None
+            self.randomized = False
+            self.random_board = None
+            self.custom_board = None
+        # Random piece arrangement
+        elif 50 < x < 300 and 200 < y < 250:
+            self.random_mode = True
+            self.custom_mode = False
+            self.display_mode = "random"
+        # Pole do wpisywania liczby czarnych
+        elif 50 < x < 140 and 260 < y < 300:
+            self.active_input = "black"
+        # Pole do wpisywania liczby białych
+        elif 160 < x < 250 and 260 < y < 300:
+            self.active_input = "white"
+        # Custom piece arrangement
+        elif 50 < x < 300 and 320 < y < 370:
+            threading.Thread(target=self._load_custom_position_thread).start()
+            self.display_mode = "custom"
+            self.custom_mode = True
+            self.randomized = False
+            self.random_board = None
+        # Back to menu
+        elif self.display_mode != "board" and 50 < x < 300 and 400 < y < 450:
+            self.display_mode = "board"
+            self.random_mode = False
+            self.custom_mode = False
+            self.active_input = None
+        else:
+            self.active_input = None
+
+    def _handle_key(self, event):
+        if self.active_input:
+            if event.key == pygame.K_BACKSPACE:
+                if self.active_input == "black":
+                    self.input_black = self.input_black[:-1]
                 else:
-                    self.active_input = None
-            elif event.type == pygame.KEYDOWN and self.active_input:
-                if event.key == pygame.K_BACKSPACE:
-                    if self.active_input == "black":
-                        self.input_black = self.input_black[:-1]
-                    else:
-                        self.input_white = self.input_white[:-1]
-                elif event.unicode.isdigit() and len(event.unicode) == 1:
-                    if self.active_input == "black":
-                        self.input_black += event.unicode
-                    else:
-                        self.input_white += event.unicode
+                    self.input_white = self.input_white[:-1]
+            elif event.unicode.isdigit() and len(event.unicode) == 1:
+                if self.active_input == "black":
+                    self.input_black += event.unicode
+                else:
+                    self.input_white += event.unicode
 
 
     def draw_button(self, surface, rect, text, font, bg_color, text_color, border_color, shadow_color):
